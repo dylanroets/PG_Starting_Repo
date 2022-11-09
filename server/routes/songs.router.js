@@ -105,4 +105,33 @@ router.delete('/:id', (req, res) => {
         });
 });
 
+// CHange rank of song
+// req.body will say up or down
+router.put('/rank/:id', (req, res) => {
+    const songId = req.params.id;
+    const direction = req.body.direction;
+
+    let queryText = '';
+
+    if (direction === 'up') {
+        queryText = `UPDATE "songs" SET "rank" = "rank" - 1 WHERE "id" = $1;`;
+    } else if (direction === 'down') {
+        queryText = `UPDATE "songs" SET "rank" = "rank" + 1 WHERE "id" = $1;`;       
+    } else {
+        // if theres no direction then give up
+        res.sendStatus(500);
+        return;
+    }
+
+    pool.query(queryText, [songId])
+        .then(() => {
+            console.log('update went well, with love, your router');
+            res.sendStatus(200);
+        })
+        .catch((error) => {
+            console.log('Error updating, query: ', queryText, 'error', error);
+            res.sendStatus(500);
+        });
+});
+
 module.exports = router;

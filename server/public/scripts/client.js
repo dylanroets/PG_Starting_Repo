@@ -5,6 +5,7 @@ function onReady() {
     $('#add').on('click', postSong);
     $('#filter-btn').on('click', getByArtist);
     $('#songsTableBody').on('click', '.delete-btn', deleteSong);
+    $('#songsTableBody').on('click', '.rank-btn', updateRank);   
 }
 
 // get artist data from the server
@@ -28,6 +29,18 @@ function getSongs() {
                             class="delete-btn" 
                             data-id="${response[i].id}"
                         >Delete</button>
+                        
+                        <button 
+                            class="rank-btn"
+                            data-id="${response[i].id}"
+                            data-direction="up"
+                        >Upvote</button>
+                        
+                        <button
+                            class="rank-btn"
+                            data-id="${response[i].id}"
+                            data-direction="down"
+                        >Downvote</button>
                     </td>
                 </tr>
             `);
@@ -90,4 +103,22 @@ function deleteSong() {
     .catch(function(error) {
         alert(`OH NO NOT SO GOOD ${error}`);
     });
+}
+
+function updateRank() {
+    const id = $(this).data('id');
+    const direction = $(this).data('direction');
+    $.ajax({
+        method: 'PUT',
+        url: `/songs/rank/${id}`,
+        data: {
+            direction: direction
+        }
+    })
+    .then(function() {
+        getSongs();
+    })
+    .catch(function(error) {
+        alert('things are bad', error);
+    })
 }
