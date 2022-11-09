@@ -43,7 +43,7 @@ const pool = require('../modules/pool');
 
 router.get('/', (req, res) => {
     // res.send(songs);  send only 1 thing as a response
-    let queryText = 'SELECT * FROM "songs" ORDER BY "rank";';
+    let queryText = 'SELECT * FROM "songs" ORDER BY "rank" DESC;';
     pool.query(queryText).then((result) => {
         console.log('result.rows', result.rows);
         res.send(result.rows)
@@ -51,6 +51,23 @@ router.get('/', (req, res) => {
         console.log(`Error making query: ${queryText}, error: ${error}`);
         res.sendStatus(500);
     });
+});
+
+router.get('/:artist', (req, res) => {
+    // res.send(songs);  send only 1 thing as a response
+    const artist = req.params.artist;
+    let queryText = `
+        SELECT * FROM "songs" 
+        WHERE "artist" LIKE $1
+        ORDER BY "rank" DESC;`;
+    pool.query(queryText, ['%' + artist + '%'])
+        .then((result) => {
+            console.log('result.rows', result.rows);
+            res.send(result.rows)
+        }).catch((error) => {
+            console.log(`Error making query: ${queryText}, error: ${error}`);
+            res.sendStatus(500);
+        });
 });
 
 router.post('/', (req, res) => {
@@ -69,6 +86,21 @@ router.post('/', (req, res) => {
         })
         .catch((error) => {
             console.log('Error POSTing query: ', queryText, 'error', error);
+            res.sendStatus(500);
+        });
+});
+
+router.delete('/:id', (req, res) => {
+    const id = req.params.id;
+    console.log('delete request for id: ', id);
+    const queryText = `DELETE FROM "songs" WHERE "id" = $1;`;
+    pool.query(queryText, [id])
+        .then(() => {
+            console.log('Song Deleted');
+            res.sendStatus(200);
+        })
+        .catch((error) => {
+            console.log(`Error DELETEing with query: ${queryText}, error: ${error}`);
             res.sendStatus(500);
         });
 });
