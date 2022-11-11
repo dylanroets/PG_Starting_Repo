@@ -18,8 +18,12 @@ function getSongs() {
         console.log("GET /songs response", response);
         // append data to the DOM
         for (let i = 0; i < response.length; i++) {
+            let rank = Number(response[i].rank);  // added this to change things appearing on the dom
             $('#songsTableBody').append(`
-                <tr>
+                <tr class="
+                    ${rank >= 400 ? 'four-hundreds' : 'low-rank'}
+                    ${response[i].artist}
+                ">
                     <td>${response[i].artist}</td>
                     <td>${response[i].track}</td>
                     <td>${response[i].rank}</td>

@@ -6,3 +6,17 @@ body{
     border-collapse: collapse;
     padding: 10px;
 }
+
+.four-hundreds {
+    background-color: blanchedalmond;
+    color: brown;
+}
+
+.Beyonce {
+    border: 4px hotpink dashed;
+}
+
+.Billy {
+    background-color: darkgreen;
+    color: gold;
+}
